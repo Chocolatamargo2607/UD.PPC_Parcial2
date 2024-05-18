@@ -9,11 +9,12 @@ import com.example.udppc_parcial2.view.screenMain
 
 @Composable
 fun appNavegation(){
+    val viewModel = ScreenAddPetViewModel()
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = appScreens.screenMain.router){
 
         composable(route= appScreens.screenMain.router){ screenMain(navController) }
-        composable(route= appScreens.screenAddPet.router){ screenAddPet(navController)}
+        composable(route= appScreens.screenAddPet.router){ screenAddPet(navController,viewModel)}
 
     }
 }
