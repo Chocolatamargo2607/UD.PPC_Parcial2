@@ -91,14 +91,13 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             TextField(
                 value = name,
                 onValueChange = {
                     viewModel.setName(it)
                 },
                 label = {
-                    Text(text = "Name Plant", color = MainColor)
+                    Text(text = "Name Pet", color = MainColor)
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
@@ -107,7 +106,7 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                 )
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = "Description Assigment", color = Color.White)
+            Text(text = "Description Pet", color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 value = type,
@@ -115,7 +114,7 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                     viewModel.setType(it)
                 },
                 placeholder = {
-                    Text(text = "Write the description",color = MainColor)
+                    Text(text = "Type of pet",color = MainColor)
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
@@ -150,7 +149,7 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                     viewModel.setBreed(it)
                 },
                 placeholder = {
-                    Text(text = "Date Assigment",color = MainColor)
+                    Text(text = "Breed of pet",color = MainColor)
                 },
                 colors = TextFieldDefaults.textFieldColors(
                     containerColor = Color.White,
@@ -160,13 +159,9 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
             )
             Spacer(modifier = Modifier.height(16.dp))
             ImageInput(uriState = image, onUriChange = {viewModel.setImage(it)})
-            Button(onClick = {
-                navController.navigate(route = appScreens.screenMain.router)
-            },colors = ButtonDefaults.buttonColors(Color.White)
-            ) {
-                Text(text = "Photo", color = MainColor)
-            }
-            Spacer(modifier = Modifier.height(20.dp))
+
+
+
 
 
 
@@ -235,9 +230,10 @@ fun ImageInput(uriState: Uri?, onUriChange: (Uri) -> Unit, labelId: String = "Im
         Button(onClick = {
             laucher.launch("image/*")
             println(selectedImageUri)
-        }) {
-            Text(text = "Submit image")
+        },colors = ButtonDefaults.buttonColors(Color.White)) {
+            Text(text = "Photo", color = MainColor)
         }
+
     }
 }
 
