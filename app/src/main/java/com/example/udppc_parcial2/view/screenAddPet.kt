@@ -24,7 +24,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +55,7 @@ import com.example.udppc_parcial2.dataManagement.Helper
 import com.example.udppc_parcial2.dataManagement.PetDTO
 import com.example.udppc_parcial2.dataManagement.PetsService
 import com.example.udppc_parcial2.ui.theme.MainColor
+import com.example.udppc_parcial2.viewModel.appNavegation.PetService
 import com.example.udppc_parcial2.viewModel.appNavegation.ScreenAddPetViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 import kotlinx.coroutines.launch
@@ -69,6 +73,11 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
     val age:Int by viewModel.age.observeAsState(initial = 0)
     val breed:String by viewModel.breed.observeAsState(initial = "")
     val image: Uri? by viewModel.image.observeAsState()
+
+
+    val nametype = arrayOf("Dog","Cat")
+    val selectPet = remember { mutableStateOf(nametype[0]) }
+    val expanded = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -108,20 +117,40 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = "Description Pet", color = Color.White)
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                value = type,
-                onValueChange = {
-                    viewModel.setType(it)
-                },
-                placeholder = {
-                    Text(text = "Type of pet",color = MainColor)
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.White,
-                    unfocusedIndicatorColor = MaterialTheme.colorScheme.background
-
+            ////////////
+            ExposedDropdownMenuBox(
+                expanded = expanded.value,
+                onExpandedChange = { expanded.value= !expanded.value}
+            ) {
+                TextField(
+                    value = selectPet.value,
+                    onValueChange = {
+                        viewModel.setType(it)
+                    },
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
+                    },
+                    modifier = Modifier.menuAnchor()
                 )
-            )
+                ExposedDropdownMenu(
+                    expanded = expanded.value,
+                    onDismissRequest = {expanded.value= false}
+                ) {
+                    nametype.forEach {
+                        DropdownMenuItem(
+                            text = { Text(text = it)},
+                            onClick = {
+                                selectPet.value= it
+                                viewModel.setType(it)
+                                expanded.value= false
+                            }
+                        )
+                    }
+                }
+            }
+
+
             Spacer(modifier = Modifier.height(16.dp))
             var ageString by remember {
                 mutableStateOf(age.toString())
@@ -170,12 +199,13 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                 modifier = Modifier.padding(16.dp)
             ){
                 Button(onClick = {
+                    viewModel.save()
                     viewModel.imprimir()
-
                     viewModel.setName("")
                     viewModel.setType("")
                     viewModel.setAge(0)
                     viewModel.setBreed("")
+
                 },colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
                     Text(text = " Save ", color = MainColor)
@@ -240,7 +270,9 @@ fun ImageInput(uriState: Uri?, onUriChange: (Uri) -> Unit, labelId: String = "Im
 @Preview(showBackground = true)
 @Composable
 fun screenAddPet() {
-    val viewModel = ScreenAddPetViewModel()
+    val context = LocalContext.current
+    val service = PetService()
+    val viewModel = ScreenAddPetViewModel(context,service)
     screenAddPet(NavController(LocalContext.current),viewModel)
 }
 

@@ -1,12 +1,22 @@
 package com.example.udppc_parcial2.viewModel.appNavegation
 
+import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import java.net.URI
 
-class ScreenAddPetViewModel ():ViewModel(){
+class ScreenAddPetViewModel (private val context: Context,private val service: PetService):ViewModel(){
+
+
+
     private val _type = MutableLiveData<String>()
     val type: LiveData<String> get() = _type
 
@@ -44,6 +54,38 @@ class ScreenAddPetViewModel ():ViewModel(){
         println(_age.value)
         println(_breed.value)
         println(_image.value)
+    }
+
+    fun getFile(uri: Uri): File{
+        val contentResolver: ContentResolver = context.contentResolver
+        val tempFile = File.createTempFile("temp_image", ".jpg", context.cacheDir)
+        val inputStream = contentResolver.openInputStream(uri)
+        val outputStream = FileOutputStream(tempFile)
+
+        inputStream?.use { input ->
+            outputStream.use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return tempFile
+    }
+
+    fun save(){
+        viewModelScope.launch{
+            val name=_name.value?:""
+            val type=_type.value?:""
+            val age=_age.value?:0
+            val breed=_breed.value?:""
+            val image=_image.value
+            if (image!=null){
+                val auxfile = getFile(image)
+                val pet = Pet(type,name,age,breed,Uri.fromFile(auxfile))
+                service.save(pet)
+            }else{
+                println("No selecciono imagen")
+            }
+        }
     }
 
 }
