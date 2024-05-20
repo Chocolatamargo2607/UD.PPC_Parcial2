@@ -5,5 +5,6 @@ data class PetDTO (
   val name: String,
   val type: String,
   val age: String,
-  val breed: String
+  val breed: String,
+  val image: String
 ){}

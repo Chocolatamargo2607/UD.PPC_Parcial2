@@ -35,14 +35,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.udppc_parcial2.R
+import com.example.udppc_parcial2.dataManagement.PetDTO
 import com.example.udppc_parcial2.ui.theme.MainColor
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
+import com.example.udppc_parcial2.viewmodels.PetViewModel
 
 @SuppressLint("ComposableNaming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun screenMain(navController: NavController) {
+fun screenMain(navController: NavController, petViewModel : PetViewModel = viewModel()) {
+
+    var pets by remember { mutableStateOf<List<PetDTO>>(emptyList()) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
     val context = LocalContext.current
     val repository = "https://github.com/Chocolatamargo2607/UD.PPC_Parcial2.git"
     val repositoryintent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
@@ -80,7 +87,34 @@ fun screenMain(navController: NavController) {
         )
         Button(onClick = { navController.navigate(route = appScreens.screenAddPet.router)},
             colors = ButtonDefaults.buttonColors(MainColor)) {
-            Text(text = "Log in")
+            Text(text = "Add New Pet")
+        }
+        Button(onClick = {
+            petViewModel.fetchPets(
+                onResult = { fetchedPets ->
+                    pets = fetchedPets
+                },
+                onError = { error ->
+                    errorMessage = error.localizedMessage
+                }
+            )
+        }, colors = ButtonDefaults.buttonColors(MainColor)) {
+            Text(text = "Pets List")
+        }
+
+        errorMessage?.let {
+            Text(text = "Error: $it", color = Color.Red)
+        }
+
+        pets.forEach { pet ->
+            Column {
+                Text(text = "ID: ${pet.id}")
+                Text(text = "Name: ${pet.name}")
+                Text(text = "Type: ${pet.type}")
+                Text(text = "Age: ${pet.age}")
+                Text(text = "Breed: ${pet.breed}")
+                Text(text = "Image: ${pet.image}")
+            }
         }
         SearchBar(
             query = query,
