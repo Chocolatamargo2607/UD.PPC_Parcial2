@@ -1,10 +1,13 @@
-package com.example.udppc_parcial2.viewModel.appNavegation
+package com.example.udppc_parcial2.viewModel
 
-import com.example.udppc_parcial2.dataManagement.PetDTO
+
 import com.example.udppc_parcial2.network.PetsApi
 import com.example.udppc_parcial2.network.RetrofitPet
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -29,7 +32,6 @@ class PetService: PetsDTO{
                         agepet,
                         breedpet
                     )
-
                 }catch (e: Exception){
                     println("Error en guarda"+e.message)
                 }
@@ -39,8 +41,13 @@ class PetService: PetsDTO{
         }
     }
 
-    override fun getAll(): List<Pet> {
-        TODO("Not yet implemented")
+    override  fun getAll(): List<Pet> {
+       return runBlocking{
+
+                val respuesta = RetrofitPet.petsApi.getAll()
+                respuesta
+
+        }
     }
 
     override fun getPet(name: String, breed: String): List<Pet> {

@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,15 +35,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.udppc_parcial2.R
 import com.example.udppc_parcial2.ui.theme.MainColor
+import com.example.udppc_parcial2.viewModel.Pet
+import com.example.udppc_parcial2.viewModel.PetService
+import com.example.udppc_parcial2.viewModel.ScreenAddPetViewModel
+import com.example.udppc_parcial2.viewModel.ScreenMainViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 
 @SuppressLint("ComposableNaming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun screenMain(navController: NavController) {
+fun screenMain(navController: NavController, viewModel: ScreenMainViewModel) {
     val context = LocalContext.current
     val repository = "https://github.com/Chocolatamargo2607/UD.PPC_Parcial2.git"
     val repositoryintent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
@@ -52,6 +58,9 @@ fun screenMain(navController: NavController) {
         Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
         active = false
     }
+
+    val pets: List<Pet>? = viewModel.pets.value
+
 
     Column(
         modifier = Modifier
@@ -80,7 +89,7 @@ fun screenMain(navController: NavController) {
         )
         Button(onClick = { navController.navigate(route = appScreens.screenAddPet.router)},
             colors = ButtonDefaults.buttonColors(MainColor)) {
-            Text(text = "Log in")
+            Text(text = "Register petღ")
         }
         SearchBar(
             query = query,
@@ -105,6 +114,17 @@ fun screenMain(navController: NavController) {
         ) {
 
         }
+        Button(onClick = {
+            println("Imprimiendo")
+            pets?.forEach{
+                    pet ->
+                println("Name: ${pet.name}, Type: ${pet.type}, Age: ${pet.age}, Breed: ${pet.breed}, ${pet.image.toString()}")
+
+            }
+        },
+            colors = ButtonDefaults.buttonColors(MainColor)) {
+            Text(text = "BLA BLA BLA")
+        }
 
     }
 
@@ -113,5 +133,8 @@ fun screenMain(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun screenMainpreview() {
-    screenMain(NavController(LocalContext.current))
+    val context = LocalContext.current
+    val service = PetService()
+    val viewModel = ScreenMainViewModel(context,service)
+    screenMain(NavController(context),viewModel)
 }

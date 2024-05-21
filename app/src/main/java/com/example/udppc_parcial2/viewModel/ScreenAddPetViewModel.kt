@@ -1,4 +1,4 @@
-package com.example.udppc_parcial2.viewModel.appNavegation
+package com.example.udppc_parcial2.viewModel
 
 import android.content.ContentResolver
 import android.content.Context
@@ -87,5 +87,7 @@ class ScreenAddPetViewModel (private val context: Context,private val service: P
             }
         }
     }
+
+
 
 }

@@ -51,12 +51,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.udppc_parcial2.dataManagement.Helper
-import com.example.udppc_parcial2.dataManagement.PetDTO
-import com.example.udppc_parcial2.dataManagement.PetsService
 import com.example.udppc_parcial2.ui.theme.MainColor
-import com.example.udppc_parcial2.viewModel.appNavegation.PetService
-import com.example.udppc_parcial2.viewModel.appNavegation.ScreenAddPetViewModel
+import com.example.udppc_parcial2.viewModel.PetService
+import com.example.udppc_parcial2.viewModel.ScreenAddPetViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 import kotlinx.coroutines.launch
 
@@ -205,6 +202,7 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                     viewModel.setType("")
                     viewModel.setAge(0)
                     viewModel.setBreed("")
+                    Toast.makeText(context, "Pet saved ✅", Toast.LENGTH_SHORT).show()
 
                 },colors = ButtonDefaults.buttonColors(Color.White)
                 ) {

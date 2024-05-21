@@ -1,7 +1,7 @@
 package com.example.udppc_parcial2.network
 
 import android.media.Image
-import com.example.udppc_parcial2.viewModel.appNavegation.Pet
+import com.example.udppc_parcial2.viewModel.Pet
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET

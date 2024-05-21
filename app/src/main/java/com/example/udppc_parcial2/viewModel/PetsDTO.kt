@@ -1,4 +1,4 @@
-package com.example.udppc_parcial2.viewModel.appNavegation
+package com.example.udppc_parcial2.viewModel
 
 interface PetsDTO {
     fun save (pet: Pet)
