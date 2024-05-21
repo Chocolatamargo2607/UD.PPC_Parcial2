@@ -19,6 +19,7 @@ class ScreenMainViewModel (private val context: Context, private val service: Pe
                 try {
                     val petList = service.getAll()
                     _pets.value = petList
+                    println("Se obtuvo lista!! ")
                 } catch (e: Exception) {
                     println("Error al obtener la lista de mascotas: ${e.message}")
                     _pets.value = emptyList()

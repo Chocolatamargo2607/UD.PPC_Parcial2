@@ -14,45 +14,54 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class PetService: PetsDTO{
+class PetService: PetsDTO {
     override fun save(pet: Pet) {
         GlobalScope.launch {
-            val image= File(pet.image?.path?: "")
-            if (image.exists()){
-                val imagepart =  MultipartBody.Part.createFormData("image",image.name,image.asRequestBody("image/*".toMediaTypeOrNull()))
-                val namepet= RequestBody.create("text/plain".toMediaTypeOrNull(),pet.name)
-                val typepet= RequestBody.create("text/plain".toMediaTypeOrNull(),pet.type)
-                val agepet= RequestBody.create("text/plain".toMediaTypeOrNull(),pet.age.toString())
-                val breedpet= RequestBody.create("text/plain".toMediaTypeOrNull(),pet.breed)
+            val image = File(pet.image?.path ?: "")
+            if (image.exists()) {
+                val imagePart = MultipartBody.Part.createFormData(
+                    "image",
+                    image.name,
+                    image.asRequestBody("image/*".toMediaTypeOrNull())
+                )
+                val namePet = RequestBody.create("text/plain".toMediaTypeOrNull(), pet.name)
+                val typePet = RequestBody.create("text/plain".toMediaTypeOrNull(), pet.type)
+                val agePet = RequestBody.create("text/plain".toMediaTypeOrNull(), pet.age.toString())
+                val breedPet = RequestBody.create("text/plain".toMediaTypeOrNull(), pet.breed)
+
                 try {
-                    val respuesta= RetrofitPet.petsApi.save(
-                        imagepart,
-                        namepet,
-                        typepet,
-                        agepet,
-                        breedpet
+                    val respuesta = RetrofitPet.petsApi.save(
+                        imagePart,
+                        namePet,
+                        typePet,
+                        agePet,
+                        breedPet
                     )
-                }catch (e: Exception){
-                    println("Error en guarda"+e.message)
+                    println("Guardado exitosamente: $respuesta")
+                } catch (e: Exception) {
+                    println("Error en guardar: ${e.message}")
                 }
-            }else{
+            } else {
                 println("Imagen no encontrada")
             }
         }
     }
 
-    override  fun getAll(): List<Pet> {
-       return runBlocking{
-
+    override fun getAll(): List<Pet> {
+        return runBlocking {
+            try {
                 val respuesta = RetrofitPet.petsApi.getAll()
+                println("Mascotas obtenidas: $respuesta")
                 respuesta
-
+            } catch (e: Exception) {
+                println("Error al obtener mascotas: ${e.message}")
+                emptyList()
+            }
         }
     }
 
     override fun getPet(name: String, breed: String): List<Pet> {
-        TODO("Not yet implemented")
+        // Implementar si es necesario
+        return emptyList()
     }
-
-
 }

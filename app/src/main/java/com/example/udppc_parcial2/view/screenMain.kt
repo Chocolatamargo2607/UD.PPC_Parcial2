@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -25,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +54,7 @@ import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 fun screenMain(navController: NavController, viewModel: ScreenMainViewModel) {
     val context = LocalContext.current
     val repository = "https://github.com/Chocolatamargo2607/UD.PPC_Parcial2.git"
-    val repositoryintent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
+    val repositoryIntent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
     val onSearch: (String) -> Unit = {
@@ -59,8 +62,12 @@ fun screenMain(navController: NavController, viewModel: ScreenMainViewModel) {
         active = false
     }
 
-    val pets: List<Pet>? = viewModel.pets.value
+    val pets by viewModel.pets.observeAsState(emptyList())
 
+    // Llama a fetchAllPets cuando se compone el Composable
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllPets()
+    }
 
     Column(
         modifier = Modifier
@@ -68,27 +75,31 @@ fun screenMain(navController: NavController, viewModel: ScreenMainViewModel) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
-    ){
+    ) {
         TopAppBar(
-            title = { Text(text=" My Little Pet ღ", onTextLayout = { }) },
+            title = { Text(text = "My Little Pet ღ") },
             colors = TopAppBarDefaults.topAppBarColors(
                 MainColor,
                 titleContentColor = Color.White
             ),
-            navigationIcon = { IconButton(onClick ={ context.startActivity(repositoryintent)}) {
-                Icon(
-                    imageVector = Icons.Default.Home,
-                    contentDescription = null,
-                    tint = Color.White
-                )}
+            navigationIcon = {
+                IconButton(onClick = { context.startActivity(repositoryIntent) }) {
+                    Icon(
+                        imageVector = Icons.Default.Home,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
             }
         )
         Image(
             painter = painterResource(id = R.drawable.logo_pet),
             contentDescription = "Logo"
         )
-        Button(onClick = { navController.navigate(route = appScreens.screenAddPet.router)},
-            colors = ButtonDefaults.buttonColors(MainColor)) {
+        Button(
+            onClick = { navController.navigate(route = appScreens.screenAddPet.router) },
+            colors = ButtonDefaults.buttonColors(MainColor)
+        ) {
             Text(text = "Register petღ")
         }
         SearchBar(
@@ -111,30 +122,49 @@ fun screenMain(navController: NavController, viewModel: ScreenMainViewModel) {
                     )
                 }
             }
-        ) {
+        ){
 
         }
-        Button(onClick = {
-            println("Imprimiendo")
-            pets?.forEach{
-                    pet ->
-                println("Name: ${pet.name}, Type: ${pet.type}, Age: ${pet.age}, Breed: ${pet.breed}, ${pet.image.toString()}")
 
-            }
-        },
-            colors = ButtonDefaults.buttonColors(MainColor)) {
+        Button(
+            onClick = {
+                println("Imprimiendo")
+                viewModel.imprimir(pets)
+            },
+            colors = ButtonDefaults.buttonColors(MainColor)
+        ) {
             Text(text = "BLA BLA BLA")
         }
 
+        if (pets.isEmpty()) {
+            Text(text = "No pets found.")
+        } else {
+            LazyColumn {
+                items(pets) { pet ->
+                    PetItem(pet = pet)
+                }
+            }
+        }
     }
+}
 
+@Composable
+fun PetItem(pet: Pet) {
+    Column(
+        modifier = Modifier.padding(8.dp)
+    ) {
+        Text(text = "Type: ${pet.type}")
+        Text(text = "Name: ${pet.name}")
+        Text(text = "Age: ${pet.age}")
+        Text(text = "Breed: ${pet.breed}")
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun screenMainpreview() {
+fun screenMainPreview() {
     val context = LocalContext.current
     val service = PetService()
-    val viewModel = ScreenMainViewModel(context,service)
-    screenMain(NavController(context),viewModel)
+    val viewModel = ScreenMainViewModel(context, service)
+    screenMain(NavController(context), viewModel)
 }
