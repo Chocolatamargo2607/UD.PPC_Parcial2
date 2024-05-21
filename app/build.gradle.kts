@@ -69,6 +69,7 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.8.0")
     implementation ("androidx.compose.ui:ui:1.0.5")
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.7")
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

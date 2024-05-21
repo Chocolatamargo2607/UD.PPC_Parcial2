@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,10 +47,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
 
 import com.example.udppc_parcial2.R
 import com.example.udppc_parcial2.dataManagement.PetDTO
@@ -76,7 +81,7 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
         Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
         active = false
     }
-    
+
 
     Column(
         modifier = Modifier
@@ -202,26 +207,53 @@ fun PetCard(pet: PetDTO) {
         if (open_Dialog.value) {
             AlertDialog(
                 onDismissRequest = { open_Dialog.value = false },
-                title = { Text(text = "${pet.name}") },
+                title = null,
                 text = {
-                    Column {
-                        Text(text = "Age: ${pet.age}")
-                        Text(text = "Type Pet: ${pet.type}")
-                        Text(text = "Breed: ${pet.breed}")
-
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(5.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = "${pet.name}",
+                            style = TextStyle(
+                                fontSize = 40.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Image(
+                            contentDescription = "",
+                            modifier = Modifier
+                                .padding(30.dp)
+                                .height(300.dp),
+                            painter = rememberImagePainter(data = pet.image)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(text = "Age:  ${pet.age}")
+                        Text(text = "Type Pet:  ${pet.type}")
+                        Text(text = "Breed:  ${pet.breed}")
                     }
                 },
                 confirmButton = {
-                    Button(onClick = { open_Dialog.value = false }) {
-                        Text(text = "Close")
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Button(onClick = { open_Dialog.value = false }) {
+                            Text(text = "Close")
+                        }
                     }
                 }
             )
         }
 
+
+
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
