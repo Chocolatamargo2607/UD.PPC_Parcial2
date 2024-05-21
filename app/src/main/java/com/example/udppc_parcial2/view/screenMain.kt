@@ -8,13 +8,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,28 +31,32 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.udppc_parcial2.R
-import com.example.udppc_parcial2.dataManagement.PetDTO
+import com.example.udppc_parcial2.network.RetrofitPet
 import com.example.udppc_parcial2.ui.theme.MainColor
+import com.example.udppc_parcial2.viewModel.appNavegation.Pet
+import com.example.udppc_parcial2.viewModel.appNavegation.PetViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
-import com.example.udppc_parcial2.viewmodels.PetViewModel
+import kotlinx.coroutines.launch
 
 @SuppressLint("ComposableNaming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun screenMain(navController: NavController, petViewModel : PetViewModel = viewModel()) {
 
-    var pets by remember { mutableStateOf<List<PetDTO>>(emptyList()) }
+    var pets by remember { mutableStateOf<List<Pet>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
@@ -108,7 +117,6 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
 
         pets.forEach { pet ->
             Column {
-                Text(text = "ID: ${pet.id}")
                 Text(text = "Name: ${pet.name}")
                 Text(text = "Type: ${pet.type}")
                 Text(text = "Age: ${pet.age}")

@@ -1,17 +1,22 @@
 package com.example.udppc_parcial2.viewModel.appNavegation
 
-import com.example.udppc_parcial2.dataManagement.PetDTO
+import androidx.lifecycle.viewModelScope
 import com.example.udppc_parcial2.network.PetsApi
 import com.example.udppc_parcial2.network.RetrofitPet
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 class PetService: PetsDTO{
+    @OptIn(DelicateCoroutinesApi::class)
     override fun save(pet: Pet) {
         GlobalScope.launch {
             val image= File(pet.image?.path?: "")

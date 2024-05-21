@@ -1,7 +1,6 @@
 package com.example.udppc_parcial2.network
 
 import android.media.Image
-import com.example.udppc_parcial2.dataManagement.PetDTO
 import com.example.udppc_parcial2.viewModel.appNavegation.Pet
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -13,12 +12,12 @@ import retrofit2.http.Query
 
 interface PetsApi{
     @GET("pets")
-    suspend fun listPets(): List<PetDTO>
+    suspend fun getAll(): List<Pet>
     @GET("search")
     suspend fun searchPets(
         @Query("name") name: String,
         @Query("orderBy") orderBy: String = "name"
-    ): List<PetDTO>
+    ): List<Pet>
     @Multipart
     @POST("pets")
     suspend fun save(
