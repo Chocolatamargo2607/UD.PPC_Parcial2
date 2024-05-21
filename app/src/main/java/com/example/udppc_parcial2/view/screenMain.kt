@@ -4,17 +4,31 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,11 +50,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+
 import com.example.udppc_parcial2.R
 import com.example.udppc_parcial2.dataManagement.PetDTO
 import com.example.udppc_parcial2.ui.theme.MainColor
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 import com.example.udppc_parcial2.viewmodels.PetViewModel
+
+
 
 @SuppressLint("ComposableNaming")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +76,7 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
         Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
         active = false
     }
+    
 
     Column(
         modifier = Modifier
@@ -89,33 +107,19 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
             colors = ButtonDefaults.buttonColors(MainColor)) {
             Text(text = "Add New Pet")
         }
-        Button(onClick = {
-            petViewModel.fetchPets(
-                onResult = { fetchedPets ->
-                    pets = fetchedPets
-                },
-                onError = { error ->
-                    errorMessage = error.localizedMessage
-                }
-            )
-        }, colors = ButtonDefaults.buttonColors(MainColor)) {
-            Text(text = "Pets List")
-        }
 
-        errorMessage?.let {
-            Text(text = "Error: $it", color = Color.Red)
-        }
 
-        pets.forEach { pet ->
-            Column {
-                Text(text = "ID: ${pet.id}")
-                Text(text = "Name: ${pet.name}")
-                Text(text = "Type: ${pet.type}")
-                Text(text = "Age: ${pet.age}")
-                Text(text = "Breed: ${pet.breed}")
-                Text(text = "Image: ${pet.image}")
+        petViewModel.fetchPets(
+            onResult = { fetchedPets ->
+                pets = fetchedPets
+            },
+            onError = { error ->
+                errorMessage = error.localizedMessage
             }
-        }
+        )
+
+
+
         SearchBar(
             query = query,
             onQueryChange = { query = it },
@@ -139,10 +143,85 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
         ) {
 
         }
+        errorMessage?.let {
+            Text(text = "Error: $it", color = Color.Red)
+        }
+
+        PetList(pets = pets)
 
     }
 
 }
+
+@Composable
+fun PetList(pets: List<PetDTO>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(pets) { pet ->
+            PetCard(pet = pet)
+        }
+    }
+}
+
+@Composable
+fun PetItem(pet: PetDTO) {
+    Column {
+        Text(text = "Name: ${pet.name}")
+        Text(text = "${pet.type}")
+    }
+}
+
+@Composable
+fun PetCard(pet: PetDTO) {
+    val context = LocalContext.current
+    var open_Dialog = remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(17.dp)
+            .clickable {
+                open_Dialog.value = true
+            }
+        ,elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+
+
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+                tint = Color.Black
+            )
+            PetItem(pet = pet)
+        }
+
+        if (open_Dialog.value) {
+            AlertDialog(
+                onDismissRequest = { open_Dialog.value = false },
+                title = { Text(text = "${pet.name}") },
+                text = {
+                    Column {
+                        Text(text = "Age: ${pet.age}")
+                        Text(text = "Type Pet: ${pet.type}")
+                        Text(text = "Breed: ${pet.breed}")
+
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = { open_Dialog.value = false }) {
+                        Text(text = "Close")
+                    }
+                }
+            )
+        }
+
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
