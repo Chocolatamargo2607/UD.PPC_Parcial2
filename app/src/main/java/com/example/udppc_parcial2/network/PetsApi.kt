@@ -17,7 +17,7 @@ interface PetsApi{
     @GET("search")
     suspend fun searchPets(
         @Query("name") name: String,
-        @Query("orderBy") orderBy: String = "name"
+        @Query("orderBy") orderBy: String = "breed"
     ): List<PetDTO>
     @Multipart
     @POST("pets")
@@ -28,6 +28,4 @@ interface PetsApi{
         @Part ("age") age: RequestBody,
         @Part ("breed") breed: RequestBody
     )
-    @GET("pets_1")
-    suspend fun getPet(name: String, breed: String):List<Pet>
 }

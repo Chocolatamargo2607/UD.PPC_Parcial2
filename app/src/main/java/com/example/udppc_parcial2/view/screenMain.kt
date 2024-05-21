@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,11 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -35,9 +30,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,12 +53,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
-
 import com.example.udppc_parcial2.R
 import com.example.udppc_parcial2.dataManagement.PetDTO
 import com.example.udppc_parcial2.ui.theme.MainColor
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
-import com.example.udppc_parcial2.viewmodels.PetViewModel
+import com.example.udppc_parcial2.viewModel.appNavegation.PetViewModel
 
 
 
@@ -77,8 +74,17 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
     val repositoryintent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
-    val onSearch: (String) -> Unit = {
-        Toast.makeText(context, query, Toast.LENGTH_SHORT).show()
+    val onSearch: (String) -> Unit = { searchQuery ->
+        petViewModel.searchPets(
+            name = searchQuery,
+            onResult = { searchedPets ->
+                pets = searchedPets
+                errorMessage = null
+            },
+            onError = { error ->
+                errorMessage = error.localizedMessage
+            }
+        )
         active = false
     }
 
@@ -112,25 +118,24 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
             colors = ButtonDefaults.buttonColors(MainColor)) {
             Text(text = "Add New Pet")
         }
-
-
-        petViewModel.fetchPets(
-            onResult = { fetchedPets ->
-                pets = fetchedPets
-            },
-            onError = { error ->
-                errorMessage = error.localizedMessage
-            }
-        )
-
-
-
+        Button(onClick = {
+            petViewModel.fetchPets(
+                onResult = { fetchedPets ->
+                    pets = fetchedPets
+                },
+                onError = { error ->
+                    errorMessage = error.localizedMessage
+                }
+            )
+        }, colors = ButtonDefaults.buttonColors(MainColor)) {
+            Text(text = "Pets List")
+        }
         SearchBar(
             query = query,
-            onQueryChange = { query = it },
-            onSearch = onSearch,
+            onQueryChange = { newQuery -> query = newQuery },
+            onSearch = { onSearch(query) },
             active = active,
-            onActiveChange = { active = it },
+            onActiveChange = { newActive -> active = newActive },
             placeholder = {
                 Box { Text(text = "Search") }
             },
@@ -145,17 +150,13 @@ fun screenMain(navController: NavController, petViewModel : PetViewModel = viewM
                     )
                 }
             }
-        ) {
-
+        ){
         }
         errorMessage?.let {
             Text(text = "Error: $it", color = Color.Red)
         }
-
         PetList(pets = pets)
-
     }
-
 }
 
 @Composable
