@@ -4,18 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -24,6 +28,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,6 +70,8 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
 
     var pets by remember { mutableStateOf<List<PetDTO>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var expanded by remember { mutableStateOf(false) }
+    val items = listOf("Age", "Breed", "Type")
 
     val context = LocalContext.current
     val repository = "https://github.com/Chocolatamargo2607/UD.PPC_Parcial2.git"
@@ -110,22 +118,70 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
             painter = painterResource(id = R.drawable.logo_pet),
             contentDescription = "Logo"
         )
-        Button(onClick = { navController.navigate(route = appScreens.screenAddPet.router)},
-            colors = ButtonDefaults.buttonColors(MainColor)) {
-            Text(text = "Add New Pet")
+
+        Row {
+            Button(onClick = { navController.navigate(route = appScreens.screenAddPet.router)},
+                colors = ButtonDefaults.buttonColors(MainColor)) {
+                Text(text = "Add New Pet")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = {
+                petViewModel.fetchPets(
+                    onResult = { fetchedPets ->
+                        pets = fetchedPets
+                    },
+                    onError = { error ->
+                        errorMessage = error.localizedMessage
+                    }
+                )
+            }, colors = ButtonDefaults.buttonColors(MainColor)) {
+                Text(text = "Pets List")
+            }
         }
-        Button(onClick = {
-            petViewModel.fetchPets(
-                onResult = { fetchedPets ->
-                    pets = fetchedPets
-                },
-                onError = { error ->
-                    errorMessage = error.localizedMessage
-                }
+///////////
+
+        Box(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Order By",
+                modifier = Modifier
+                    .clickable(onClick = { expanded = true })
+                    .border(
+                        width = 1.dp,
+                        color = Color.Black,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
             )
-        }, colors = ButtonDefaults.buttonColors(MainColor)) {
-            Text(text = "Pets List")
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.width(IntrinsicSize.Min)
+            ) {
+                items.forEach { item ->
+                    DropdownMenuItem(
+                        text = { Text(text = "${item}")},
+                        onClick = {
+                            expanded = false
+                        }
+                    )
+
+                }
+            }
         }
+
+
+
+
+
+
+
+
+
+
+
+
         SearchBar(
             query = query,
             onQueryChange = { newQuery -> query = newQuery },
