@@ -7,11 +7,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.udppc_parcial2.view.screenAddPet
 import com.example.udppc_parcial2.view.screenMain
+import com.example.udppc_parcial2.repository.PetSaveRepository
+import com.example.udppc_parcial2.viewModel.ScreenAddPetViewModel
 
 @Composable
 fun appNavegation(){
     val context = LocalContext.current
-    val service = PetService()
+    val service = PetSaveRepository()
     val viewModel = ScreenAddPetViewModel(context,service)
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = appScreens.screenMain.router){

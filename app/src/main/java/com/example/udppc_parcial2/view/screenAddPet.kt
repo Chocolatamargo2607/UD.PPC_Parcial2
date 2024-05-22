@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -47,8 +48,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.udppc_parcial2.ui.theme.MainColor
-import com.example.udppc_parcial2.viewModel.appNavegation.PetService
-import com.example.udppc_parcial2.viewModel.appNavegation.ScreenAddPetViewModel
+import com.example.udppc_parcial2.repository.PetSaveRepository
+import com.example.udppc_parcial2.viewModel.ScreenAddPetViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -196,6 +197,9 @@ fun screenAddPet(navController: NavController, viewModel: ScreenAddPetViewModel)
                     viewModel.setType("")
                     viewModel.setAge(0)
                     viewModel.setBreed("")
+                    Toast.makeText(
+                        context, "Saved ✅", Toast.LENGTH_SHORT
+                    ).show()
 
                 },colors = ButtonDefaults.buttonColors(Color.White)
                 ) {
@@ -262,7 +266,7 @@ fun ImageInput(uriState: Uri?, onUriChange: (Uri) -> Unit, labelId: String = "Im
 @Composable
 fun screenAddPet() {
     val context = LocalContext.current
-    val service = PetService()
+    val service = PetSaveRepository()
     val viewModel = ScreenAddPetViewModel(context,service)
     screenAddPet(NavController(LocalContext.current),viewModel)
 }

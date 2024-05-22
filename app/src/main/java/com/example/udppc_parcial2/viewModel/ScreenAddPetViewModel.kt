@@ -1,4 +1,4 @@
-package com.example.udppc_parcial2.viewModel.appNavegation
+package com.example.udppc_parcial2.viewModel
 
 import android.content.ContentResolver
 import android.content.Context
@@ -8,12 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import androidx.lifecycle.viewModelScope
+import com.example.udppc_parcial2.repository.PetSaveRepository
 import kotlinx.coroutines.launch
-import java.net.URI
 
-class ScreenAddPetViewModel (private val context: Context,private val service: PetService):ViewModel(){
+class ScreenAddPetViewModel (private val context: Context,private val service: PetSaveRepository):ViewModel(){
 
 
 

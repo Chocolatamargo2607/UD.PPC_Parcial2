@@ -1,4 +1,4 @@
-package com.example.udppc_parcial2.dataManagement
+package com.example.udppc_parcial2.viewModel
 
 data class PetDTO (
   val id: Int,

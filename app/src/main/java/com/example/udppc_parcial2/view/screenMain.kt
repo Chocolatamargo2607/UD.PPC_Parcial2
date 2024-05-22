@@ -3,7 +3,6 @@ package com.example.udppc_parcial2.view
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,12 +29,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,17 +50,17 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.udppc_parcial2.R
-import com.example.udppc_parcial2.dataManagement.PetDTO
+import com.example.udppc_parcial2.viewModel.PetDTO
 import com.example.udppc_parcial2.ui.theme.MainColor
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
-import com.example.udppc_parcial2.viewModel.appNavegation.PetViewModel
+import com.example.udppc_parcial2.viewModel.ScreenMainViewModel
 
 
 
 @SuppressLint("ComposableNaming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun screenMain(navController: NavController, petViewModel : PetViewModel = viewModel()) {
+fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel = viewModel()) {
 
     var pets by remember { mutableStateOf<List<PetDTO>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
