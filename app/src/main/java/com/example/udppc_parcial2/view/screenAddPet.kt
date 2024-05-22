@@ -47,7 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.udppc_parcial2.ui.theme.MainColor
-import com.example.udppc_parcial2.viewModel.appNavegation.PetService
+import com.example.udppc_parcial2.repository.PetSaveRepository
 import com.example.udppc_parcial2.viewModel.appNavegation.ScreenAddPetViewModel
 import com.example.udppc_parcial2.viewModel.appNavegation.appScreens
 
@@ -262,7 +262,7 @@ fun ImageInput(uriState: Uri?, onUriChange: (Uri) -> Unit, labelId: String = "Im
 @Composable
 fun screenAddPet() {
     val context = LocalContext.current
-    val service = PetService()
+    val service = PetSaveRepository()
     val viewModel = ScreenAddPetViewModel(context,service)
     screenAddPet(NavController(LocalContext.current),viewModel)
 }

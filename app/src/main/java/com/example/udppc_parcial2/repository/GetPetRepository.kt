@@ -1,10 +1,10 @@
 package com.example.udppc_parcial2.repository
 
-import com.example.udppc_parcial2.dataManagement.PetDTO
+import com.example.udppc_parcial2.viewModel.appNavegation.PetDTO
 import com.example.udppc_parcial2.network.PetsApi
 import com.example.udppc_parcial2.network.RetrofitPet
 
-class PetRepository {
+class GetPetRepository {
     private val petsApi: PetsApi = RetrofitPet.petsApi
 
     private suspend fun listPets(name: String, orderBy: String = "breed"): List <PetDTO> {

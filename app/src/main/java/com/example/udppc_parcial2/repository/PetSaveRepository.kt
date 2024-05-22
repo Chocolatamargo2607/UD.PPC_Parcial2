@@ -1,8 +1,8 @@
-package com.example.udppc_parcial2.viewModel.appNavegation
+package com.example.udppc_parcial2.repository
 
-import com.example.udppc_parcial2.dataManagement.PetDTO
-import com.example.udppc_parcial2.network.PetsApi
 import com.example.udppc_parcial2.network.RetrofitPet
+import com.example.udppc_parcial2.viewModel.appNavegation.Pet
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -11,7 +11,8 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class PetService: PetsDTO{
+class PetSaveRepository: PostPetsRepository {
+    @OptIn(DelicateCoroutinesApi::class)
     override fun save(pet: Pet) {
         GlobalScope.launch {
             val image= File(pet.image?.path?: "")
@@ -38,14 +39,5 @@ class PetService: PetsDTO{
             }
         }
     }
-
-    override fun getAll(): List<Pet> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getPet(name: String, breed: String): List<Pet> {
-        TODO("Not yet implemented")
-    }
-
 
 }
