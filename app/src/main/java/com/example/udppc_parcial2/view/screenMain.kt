@@ -38,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,13 +72,15 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
     var pets by remember { mutableStateOf<List<PetDTO>>(emptyList()) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var expanded by remember { mutableStateOf(false) }
-    val items = listOf("Age", "Breed", "Type")
+    val items = listOf("age", "breed", "type", "name")
+    var selectedOrderBy by remember { mutableStateOf(items.first()) }
 
     val context = LocalContext.current
     val repository = "https://github.com/Chocolatamargo2607/UD.PPC_Parcial2.git"
     val repositoryintent = remember { Intent(Intent.ACTION_VIEW, Uri.parse(repository)) }
     var query by remember { mutableStateOf("") }
     var active by remember { mutableStateOf(false) }
+
     val onSearch: (String) -> Unit = { searchQuery ->
         petViewModel.searchPets(
             name = searchQuery,
@@ -92,6 +95,18 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
         active = false
     }
 
+    val fetchPets = { sortBy: String ->
+        petViewModel.fetchPets(sortBy, onResult = {
+            pets = it
+            errorMessage = null
+        }, onError = { error ->
+            errorMessage = error.localizedMessage
+        })
+    }
+
+    LaunchedEffect(selectedOrderBy) {
+        fetchPets(selectedOrderBy)
+    }
 
     Column(
         modifier = Modifier
@@ -125,35 +140,20 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
                 Text(text = "Add New Pet")
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Button(onClick = {
-                petViewModel.fetchPets(
-                    onResult = { fetchedPets ->
-                        pets = fetchedPets
-                    },
-                    onError = { error ->
-                        errorMessage = error.localizedMessage
-                    }
-                )
-            }, colors = ButtonDefaults.buttonColors(MainColor)) {
-                Text(text = "Pets List")
-            }
         }
-///////////
 
         Box(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable(onClick = { expanded = true })
+                .border(
+                    width = 1.dp,
+                    color = Color.Black,
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
-            Text(
-                text = "Order By",
-                modifier = Modifier
-                    .clickable(onClick = { expanded = true })
-                    .border(
-                        width = 1.dp,
-                        color = Color.Black,
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-            )
+            Text(text = "Order List By: $selectedOrderBy")
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
@@ -161,26 +161,17 @@ fun screenMain(navController: NavController, petViewModel : ScreenMainViewModel 
             ) {
                 items.forEach { item ->
                     DropdownMenuItem(
-                        text = { Text(text = "${item}")},
+                        text = { Text(text = item) },
                         onClick = {
+                            selectedOrderBy = item
                             expanded = false
+                            fetchPets(selectedOrderBy)
                         }
                     )
-
                 }
+
             }
         }
-
-
-
-
-
-
-
-
-
-
-
 
         SearchBar(
             query = query,
@@ -302,9 +293,6 @@ fun PetCard(pet: PetDTO) {
                 }
             )
         }
-
-
-
     }
 }
 

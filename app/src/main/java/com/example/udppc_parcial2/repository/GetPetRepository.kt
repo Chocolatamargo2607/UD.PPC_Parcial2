@@ -7,10 +7,9 @@ import com.example.udppc_parcial2.network.RetrofitPet
 class GetPetRepository {
     private val petsApi: PetsApi = RetrofitPet.petsApi
 
-    private suspend fun listPets(name: String, orderBy: String = "breed"): List <PetDTO> {
-        return petsApi.listPets()
+    private suspend fun listPets(sortBy: String): List<PetDTO> {
+        return petsApi.listPets(sortBy)
     }
-
     suspend fun searchPets(name: String): List<PetDTO> {
         return listPets(name).filter { it.name.contains(name, ignoreCase = true) }
     }

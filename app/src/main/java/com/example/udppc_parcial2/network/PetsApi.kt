@@ -11,11 +11,12 @@ import retrofit2.http.Query
 
 interface PetsApi{
     @GET("pets")
-    suspend fun listPets(): List<PetDTO>
+    suspend fun listPets(
+        @Query("sortBy") sortBy: String
+    ): List<PetDTO>
     @GET("search")
     suspend fun searchPets(
-        @Query("name") name: String,
-        @Query("orderBy") orderBy: String = "breed"
+        @Query("name") name: String
     ): List<PetDTO>
     @Multipart
     @POST("pets")

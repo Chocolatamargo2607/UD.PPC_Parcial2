@@ -10,7 +10,7 @@ class ScreenMainViewModel : ViewModel() {
     private val petsApi = RetrofitPet.petsApi
     private val petRepository = GetPetRepository()
 
-    fun searchPets(name: String, orderBy: String = "breed", onResult: (List<PetDTO>) -> Unit, onError: (Throwable) -> Unit) {
+    fun searchPets(name: String, onResult: (List<PetDTO>) -> Unit, onError: (Throwable) -> Unit) {
         viewModelScope.launch {
             try {
                 val pets = petRepository.searchPets(name)
@@ -20,10 +20,11 @@ class ScreenMainViewModel : ViewModel() {
             }
         }
     }
-    fun fetchPets(onResult: (List<PetDTO>) -> Unit, onError: (Throwable) -> Unit) {
+
+    fun fetchPets(sortBy: String, onResult: (List<PetDTO>) -> Unit, onError: (Throwable) -> Unit) {
         viewModelScope.launch {
             try {
-                val pets = petsApi.listPets()
+                val pets = petsApi.listPets(sortBy)
                 onResult(pets)
             } catch (e: Exception) {
                 onError(e)
